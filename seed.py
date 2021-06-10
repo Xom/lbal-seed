@@ -386,18 +386,22 @@ extras = -1
 for line in sys.stdin:
   if extras == -1:
     sys.stdout.write(line)
-    start = line.find('"item_types":[')
+    start = line.find('"destroyed_item_types":[')
     if start == -1:
       continue
     extras = 0
-    start += 14
+    start += 24
     end = line.index(']', start)
-    if end == start:
-      continue
-    for item in [s[1:-1] for s in line[start:end].split(',')]:
-      DICT[item] = True # skip when rolling
-      if item == 'cursed_katana' or item == 'rain_cloud':
-        extras += 1
+    if end != start:
+      for item in [s[1:-1] for s in line[start:end].split(',')]:
+        DICT[item] = True
+    start = line.index('"item_types":[', end) + 14
+    end = line.index(']', start)
+    if end != start:
+      for item in [s[1:-1] for s in line[start:end].split(',')]:
+        DICT[item] = True
+        if item == 'cursed_katana' or item == 'rain_cloud':
+          extras += 1
     continue
 
   start = line.find('"saved_card_types":[')
