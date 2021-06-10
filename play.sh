@@ -56,13 +56,13 @@ fi
 while true; do
     "$1" > /dev/null 2>&1
     cp "$2" LBAL.save.bak
-    echo Original:
-    cat LBAL.save.bak
-    echo
+    # echo Original:
+    # cat LBAL.save.bak
+    # echo
     ./seed.py "$SEED" < LBAL.save.bak > "$2"
-    echo Modified:
-    cat "$2"
-    echo
+    # echo Modified:
+    # cat "$2"
+    # echo
 #     read -s -n 1 -p "Press any key to continue . . ."
 #     echo ""
 done
