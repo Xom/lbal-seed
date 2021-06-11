@@ -388,6 +388,9 @@ for line in sys.stdin:
     sys.stdout.write(line)
     start = line.find('"destroyed_item_types":[')
     if start == -1:
+      # Occurrence of "highlander" before items means highlander in inventory
+      if '"highlander"' in line:
+        DICT['highlander'] = True
       continue
     extras = 0
     start += 24
