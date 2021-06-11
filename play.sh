@@ -36,22 +36,50 @@ ask() {
     done
 }
 
+daily=$(date +"%Y%m%d")
+
 if [ -z "$3" ]; then
-    SEED=$(date +"%s")
+    echo "Input a seed string, then press enter. For an auto-generated seed, input nothing. For the Seed of the Day, zz-${daily}, input a question mark."
+    echo -n "Input: "
+    IFS=$'\n' # don't split answer on spaces
+    read -r SEED </dev/tty
+    echo
+
+    if [ -z "$SEED" ]; then
+        b36="0123456789abcdefghijklmnopqrstuvwxyz"
+        daily=$(date +"%s")
+        SEED=""
+        while true; do
+            SEED=${b36:((daily%36)):1}${SEED}
+            if [ $((daily=${daily}/36)) -eq 0 ]; then
+                break
+            fi
+        done
+        SEED="zz-$SEED"
+    fi
 else
-    SEED=${3%\.dat}
-    if [ -f "$SEED".dat ]; then
-        echo Seed already in use: "$SEED"
-        if ! ask "Are you continuing (y) or restarting (n)?" Y; then
-            rm "$SEED".dat
-            echo
-        fi
+    SEED="$3"
+fi
+
+SEED="${SEED%\.dat}"
+if [[ "$SEED" == "?"* ]]; then
+    SEED="zz-$SEED"
+fi
+SEED="${SEED//\?/$daily}"
+
+if [ -f "$SEED".dat ]; then
+    echo Seed already in use: "$SEED"
+    if ! ask "Are you continuing (y) or restarting (n)?" Y; then
+        rm "$SEED".dat
+        echo
     fi
 fi
 
 if [ ! -f "$SEED".dat ]; then
     echo New seed: "$SEED"
 fi
+
+echo
 
 while true; do
     "$1" > /dev/null 2>&1
