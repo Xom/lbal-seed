@@ -306,15 +306,15 @@ RNG_TYPE = [
   len(IDS[0][0][1]), # 6: common lunchbox symbol
   len(IDS[0][1][1]), # 7: uncommon lunchbox symbol
   len(IDS[0][2][1]), # 8: rare lunchbox symbol (very_rare lunchbox is always watermelon)
-  None, # 9: chance to replace symbol common due to cursed_katana or rain_cloud
-  None, # 10: item rarity
-  len(IDS[1][0][0]), # 11: common item
-  len(IDS[1][1][0]), # 12: uncommon item
-  len(IDS[1][2][0]), # 13: rare item
-  len(IDS[1][3][0]), # 14: very_rare item
-  None, # 15: lunchbox rarity
+  None, # 9: item rarity
+  len(IDS[1][0][0]), # 10: common item
+  len(IDS[1][1][0]), # 11: uncommon item
+  len(IDS[1][2][0]), # 12: rare item
+  len(IDS[1][3][0]), # 13: very_rare item
+  None, # 14: lunchbox rarity
+  None, # 15: choice between ninja and rain when both cursed_katana and rain_cloud (no perf cost when not both, due to being at end of list)
 ]
-THRESHOLD = 625 # deserializing getstate() output involves parsing 625 integers, so it can be faster to count the number of state advances after seeding
+THRESHOLD = 625 # deserializing getstate() output involves parsing 625 integers, so it can be faster to count and replay state advances after seeding
 
 SEED = [sys.argv[1]]
 STATE = None
@@ -420,7 +420,7 @@ for line in sys.stdin:
   ss = line[pos:end].split(',', 2)
   c = len(ss)
   t = is_item(ss[0][1:-1])
-  rng = (1, 10)[t]
+  rng = (1, 9)[t]
   month_start = line.index('"times_rent_paid":', end) + 18
   month = int(line[month_start:line.index(',', month_start)])
   odds = ODDS[t][min(month, 5)]
@@ -447,8 +447,8 @@ for line in sys.stdin:
       t = 2
       rng = 15
   if t == 0 and extras != 0:
-    cc = RNG_TYPE[2]
-    cd = extras
+    numer = extras
+    denom = extras + RNG_TYPE[2]
     while len(rr) < c:
       x = random_float(rng) * unluck
       if x < odds[0]:
@@ -457,21 +457,18 @@ for line in sys.stdin:
         rr.append(2)
       elif x < odds[2]:
         rr.append(1)
-      elif cd == 0:
-        rr.append(0)
-      else:
-        x = random_float(9) * (cc + cd)
-        if x < cd:
-          if cd != extras:
-            rr.append(-2 if -1 in rr else -1)
-          elif x >= 1 or 'rain_cloud' not in DICT:
-            rr.append(-1)
-          else:
-            rr.append(-2)
-          cd -= 1
+      elif numer != 0 and (x - odds[2]) * denom < (unluck - odds[2]) * numer:
+        if numer == 2:
+          # rr.append(int(x * 65536) % 2 - 2) # alternative to maintaining RNG[15] is to use a low-order "bit", but RNG[15] has no significant perf cost
+          rr.append(-2 if random_float(15) < 0.5 else -1)
+        elif 'rain_cloud' not in DICT or -1 in rr:
+          rr.append(-2)
         else:
-          rr.append(0)
-          cc -= 1
+          rr.append(-1)
+        numer -= 1
+      else:
+        rr.append(0)
+      denom -= 1
   else:
     while len(rr) < c:
       x = random_float(rng) * unluck
@@ -491,10 +488,10 @@ for line in sys.stdin:
   ss = []
   if t == 0:
     for r in rr:
-      if r == -1:
+      if r == -2:
         ss.append('ninja')
         continue
-      if r == -2:
+      if r == -1:
         ss.append('rain')
         continue
       nolunch = IDS[0][r][0]
@@ -514,7 +511,7 @@ for line in sys.stdin:
   elif t == 1:
     for r in rr:
       while True:
-        i = random_int(r + 11)
+        i = random_int(r + 10)
         s = IDS[1][r][0][i]
         if i == 0 or s not in DICT:
           ss.append(s)
