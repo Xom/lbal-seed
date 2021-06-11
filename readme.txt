@@ -14,6 +14,6 @@ Make a backup of your LBAL.save in case something goes wrong. Once you've invoke
 
 Share seed strings with your friends and compare how you do! I'm Xom#7240 on Discord if you have any questions or feedback, or want to share seeds!
 
-In LBAL v0.6, there is a save bug which means you should avoid saving during certain situations, so you won't be able to use the seed on every roll. Specifically, you shouldn't save on both the item roll and the symbol roll before it; it's only safe to save once per rent round. I recommend not applying the seed to the symbol roll before the item roll for now. Other than that roll, it is safe to apply the seed to every reroll. Another unsafe time to save is during Lunchbox rolls; I'm not sure about other roll-generating items like Symbol Bombs, but I would avoid those too for now. The bug is believed to be fixed in the upcoming v0.7.
+LBAL v0.7 appears to have fixed LBAL v0.6's save bug that had a severe impact on this mod. If you encounter any problems, please let me know.
 
-When v0.7 is released, it's likely that the only necessary update to the script will be to the symbol and item IDs in seed.py, which I'll do ASAP, but who knows for sure, we'll see.
+To elaborate, the bug made it unsafe to save in some situations, which meant you couldn't apply the seed to every roll. Specifically, you couldn't save on both the item roll and the symbol roll before it; it was only safe to save once per rent round. Another unsafe time to save was during Lunchbox rolls.

@@ -23,42 +23,28 @@ ODDS = [[
   [0.0125, 0.05, 0.35],
 ]]
 
-# [type][rarity][is_lunch][i]
+# [type][rarity][group][i]
 # detecting symbols vs. items relies on IDS being sorted (except Pool Ball variants so that we can give them special treatment when rolling)
 IDS = [[[[
   'anchor',
   'banana_peel',
-  'bee',
   'bounty_hunter',
   'bubble',
-  'cat',
   'coal',
   'coin',
-  'crab',
-  'crow',
   'cultist',
   'd3',
-  'dog',
   'dwarf',
   'flower',
-  'goldfish',
-  'goose',
   'key',
   'lockbox',
-  'magpie',
   'miner',
-  'monkey',
-  'mouse',
   'ore',
-  'owl',
-  'oyster',
   'pearl',
-  'rabbit',
+  'present',
   'seed',
   'shiny_pebble',
-  'snail',
   'toddler',
-  'turtle',
   'urn',
 ], [
   'banana',
@@ -68,15 +54,28 @@ IDS = [[[[
   'cherry',
   'egg',
   'milk',
+], [
+  'bee',
+  'cat',
+  'crab',
+  'crow',
+  'dog',
+  'goldfish',
+  'goose',
+  'magpie',
+  'monkey',
+  'mouse',
+  'owl',
+  'oyster',
+  'snail',
+  'turtle',
 ]], [[
   'bar_of_soap',
-  'bear',
   'big_ore',
   'big_urn',
   'billionaire',
   'bronze_arrow',
   'buffing_powder',
-  'chick',
   'clubs',
   'coconut',
   'd5',
@@ -104,30 +103,34 @@ IDS = [[[[
   'reroll_capsule',
   'safe',
   'sapphire',
-  'sloth',
   'spades',
   'target',
   'tedium_capsule',
   'thief',
-  'void_creature',
   'void_stone',
-  'wolf',
 ], [
   'chemical_seven',
   'coconut_half',
   'orange',
   'peach',
   'plum',
+  'void_fruit',
   'wine',
+], [
+  'bear',
+  'chick',
+  'rabbit',
+  'sloth',
+  'void_creature',
+  'wolf',
 ]], [[
+  'amethyst',
   'archaeologist',
   'bartender',
   'beastmaster',
   'beehive',
   'card_shark',
   'chef',
-  'chicken',
-  'cow',
   'dame',
   'diver',
   'emerald',
@@ -154,10 +157,13 @@ IDS = [[[[
   'honey',
   'martini',
   'omelette',
+  'pear',
   'strawberry',
+], [
+  'chicken',
+  'cow',
 ]], [[
   'diamond',
-  'eldritch_beast',
   'golden_arrow',
   'highlander',
   'mega_chest',
@@ -166,8 +172,11 @@ IDS = [[[[
   'wildcard',
 ], [
   'watermelon',
+], [
+  'eldritch_beast',
 ]]], [[[
   'pool_ball',
+  'adoption_papers',
   'black_pepper',
   'blue_pepper',
   'checkered_flag',
@@ -182,6 +191,7 @@ IDS = [[[[
   'happy_hour',
   'jackolantern',
   'kyle_the_kernite',
+  'lime_pepper',
   'lockpick',
   'lucky_cat',
   'lucky_seven',
@@ -281,11 +291,6 @@ def is_item(s):
       n = len(ll)
       lo = 0
       hi = n - 1
-      i = (lo + hi) // 2
-      if ll[i] < s:
-        lo = i + 1
-      else:
-        hi = i
       while lo != hi:
         i = (lo + hi) // 2
         if ll[i] < s:
@@ -299,20 +304,24 @@ def is_item(s):
 RNG_TYPE = [
   2147483647, # 0: seed
   None, # 1: symbol rarity
-  len(IDS[0][0][0]) + len(IDS[0][0][1]), # 2: common symbol
-  len(IDS[0][1][0]) + len(IDS[0][1][1]), # 3: uncommon symbol
-  len(IDS[0][2][0]) + len(IDS[0][2][1]), # 4: rare symbol
-  len(IDS[0][3][0]) + len(IDS[0][3][1]), # 5: very_rare symbol
+  len(IDS[0][0][0]) + len(IDS[0][0][1]) + len(IDS[0][0][2]), # 2: common symbol
+  len(IDS[0][1][0]) + len(IDS[0][1][1]) + len(IDS[0][1][2]), # 3: uncommon symbol
+  len(IDS[0][2][0]) + len(IDS[0][2][1]) + len(IDS[0][2][2]), # 4: rare symbol
+  len(IDS[0][3][0]) + len(IDS[0][3][1]) + len(IDS[0][3][2]), # 5: very_rare symbol
   len(IDS[0][0][1]), # 6: common lunchbox symbol
   len(IDS[0][1][1]), # 7: uncommon lunchbox symbol
-  len(IDS[0][2][1]), # 8: rare lunchbox symbol (very_rare lunchbox is always watermelon)
-  None, # 9: item rarity
-  len(IDS[1][0][0]), # 10: common item
-  len(IDS[1][1][0]), # 11: uncommon item
-  len(IDS[1][2][0]), # 12: rare item
-  len(IDS[1][3][0]), # 13: very_rare item
-  None, # 14: lunchbox rarity
-  None, # 15: choice between ninja and rain when both cursed_katana and rain_cloud (no perf cost when not both, due to being at end of list)
+  len(IDS[0][2][1]), # 8: rare lunchbox symbol (very_rare is always watermelon)
+  len(IDS[0][0][2]), # 9: common adoption_papers symbol
+  len(IDS[0][1][2]), # 10: uncommon adoption_papers symbol
+  len(IDS[0][2][2]), # 11: rare adoption_papers symbol (very_rare is always eldritch_beast)
+  None, # 12: item rarity
+  len(IDS[1][0][0]), # 13: common item
+  len(IDS[1][1][0]), # 14: uncommon item
+  len(IDS[1][2][0]), # 15: rare item
+  len(IDS[1][3][0]), # 16: very_rare item
+  None, # 17: lunchbox rarity
+  None, # 18: adoption_papers rarity
+  None, # 19: choice between ninja and rain when both cursed_katana and rain_cloud (no perf cost when not both, due to being at end of list)
 ]
 THRESHOLD = 625 # deserializing getstate() output involves parsing 625 integers, so it can be faster to count and replay state advances after seeding
 
@@ -420,7 +429,7 @@ for line in sys.stdin:
   ss = line[pos:end].split(',', 2)
   c = len(ss)
   t = is_item(ss[0][1:-1])
-  rng = (1, 9)[t]
+  rng = (1, 12)[t]
   month_start = line.index('"times_rent_paid":', end) + 18
   month = int(line[month_start:line.index(',', month_start)])
   odds = ODDS[t][min(month, 5)]
@@ -443,9 +452,10 @@ for line in sys.stdin:
     if r_start != -1:
       r_start += 18
       unluck /= float(line[r_start:line.index(',', r_start)])
-    if line.find('"forced_group":"food"', 0, start) != -1:
-      t = 2
-      rng = 15
+    r_start = line.find('"forced_group":"', 0, start)
+    if r_start != -1:
+      t = 2 if line[r_start+16:r_start+21] == 'food"' else 3
+      rng = t + 15
   if t == 0 and extras != 0:
     numer = extras
     denom = extras + RNG_TYPE[2]
@@ -459,8 +469,8 @@ for line in sys.stdin:
         rr.append(1)
       elif numer != 0 and (x - odds[2]) * denom < (unluck - odds[2]) * numer:
         if numer == 2:
-          # rr.append(int(x * 65536) % 2 - 2) # alternative to maintaining RNG[15] is to use a low-order "bit", but RNG[15] has no significant perf cost
-          rr.append(-2 if random_float(15) < 0.5 else -1)
+          # rr.append(int(x * 65536) % 2 - 2) # alternative to maintaining RNG[-1] is to use a low-order "bit", but RNG[-1] has no significant perf cost
+          rr.append(-2 if random_float(19) < 0.5 else -1)
         elif 'rain_cloud' not in DICT or -1 in rr:
           rr.append(-2)
         else:
@@ -495,15 +505,18 @@ for line in sys.stdin:
         ss.append('rain')
         continue
       nolunch = IDS[0][r][0]
+      lnl = len(nolunch)
       while True:
         s = None
         i = random_int(r + 2)
-        if i < len(nolunch):
+        if i < lnl:
           s = nolunch[i]
-        elif r == 3:
-          s = 'watermelon'
         else:
-          s = IDS[0][r][1][random_int(r + 6)]
+          lunch = IDS[0][r][1]
+          if i < lnl + len(lunch):
+            s = 'watermelon' if r == 3 else lunch[random_int(r + 6)]
+          else:
+            s = 'eldritch_beast' if r == 3 else IDS[0][r][2][random_int(r + 9)]
         if s not in DICT:
           ss.append(s)
           DICT[s] = True
@@ -511,7 +524,7 @@ for line in sys.stdin:
   elif t == 1:
     for r in rr:
       while True:
-        i = random_int(r + 10)
+        i = random_int(r + 13)
         s = IDS[1][r][0][i]
         if i == 0 or s not in DICT:
           ss.append(s)
@@ -521,13 +534,14 @@ for line in sys.stdin:
     for r in rr:
       while True:
         if r == 3:
-          if 'watermelon' not in DICT:
-            ss.append('watermelon')
-            DICT['watermelon'] = True
+          very_rare = IDS[0][3][t - 1][0]
+          if very_rare not in DICT:
+            ss.append(very_rare)
+            DICT[very_rare] = True
             break
-          s = IDS[0][2][1][random_int(8)]
+          s = IDS[0][2][t - 1][random_int(t * 3 + 2)]
         else:
-          s = IDS[0][r][1][random_int(r + 6)]
+          s = IDS[0][r][t - 1][random_int(t * 3 + r)]
         if s not in DICT:
           ss.append(s)
           DICT[s] = True
