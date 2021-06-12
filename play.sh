@@ -70,27 +70,84 @@ SEED="${SEED//\?/$daily}"
 if [ -f "$SEED".dat ]; then
     echo Seed already in use: "$SEED"
     if ! ask "Are you continuing (y) or restarting (n)?" Y; then
-        rm "$SEED".dat
+        rm -f "$SEED".dat "$SEED".save
         echo
+    elif [ ! -f "$SEED".save ]; then
+        if ! ask "Missing ${SEED}.save! Continue anyway (y) or stop (n)?" N; then
+            exit
+        fi
+        if [ -f "$2" ]; then
+            cp "$2" "$SEED".save # avoid killing LBAL when detecting previous save
+        else
+            echo "foo" > "$SEED".save
+        fi
     fi
 fi
 
 if [ ! -f "$SEED".dat ]; then
     echo New seed: "$SEED"
+    if [ -f "$2" ]; then
+        cp "$2" "$SEED".save # avoid killing LBAL when detecting previous save
+    else
+        echo "foo" > "$SEED".save
+    fi
 fi
 
 echo
 
-while true; do
-    "$1" > /dev/null 2>&1
-    cp "$2" LBAL.save.bak
-    # echo Original:
-    # cat LBAL.save.bak
-    # echo
-    ./seed.py "$SEED" < LBAL.save.bak > "$2"
-    # echo Modified:
-    # cat "$2"
-    # echo
-#     read -s -n 1 -p "Press any key to continue . . ."
-#     echo ""
-done
+cleanup() {
+    kill "$!" 2> /dev/null
+}
+
+if [[ "$1" == *".exe" ]]; then
+    echo "play.sh can't kill native Windows programs. You must manually close the game window at each roll."
+    read -s -n 1 -p "Press any key to continue..."
+    echo
+    while true; do
+        "$1" > /dev/null 2>&1
+        # echo Original:
+        # cat "$2"
+        # echo
+        ./seed.py "$SEED" < "$2" > "$SEED".save
+        cp "$SEED".save "$2"
+        # echo Modified:
+        # cat "$SEED".save
+        # echo
+        # read -s -n 1 -p "Press any key to continue..."
+        # echo
+    done
+else
+    trap cleanup EXIT
+    new=3 # counter to stop stringsearching for "rent_values":[25,5] after a few loops
+    while true; do
+        prev=$(tail -n 1 "$SEED".save)
+        "$1" > /dev/null 2>&1 &
+        while sleep 0.1; do
+            next=$(tail -n 1 "$2")
+            if [ "$prev" != "$next" ] && [[ "$next" == *"\"saved_card_types\":[\""* ]]; then
+                if [ $new -eq 0 ]; then
+                    break
+                fi
+                ((new--))
+                if [[ "$next" != *"\"rent_values\":[25,5]"* ]]; then
+                    break
+                fi
+                prev="$next"
+            elif ! kill -0 "$!" 2> /dev/null; then
+                exit
+            fi
+        done
+        kill "$!" 2> /dev/null
+        wait
+        # echo Original:
+        # cat "$2"
+        # echo
+        ./seed.py "$SEED" < "$2" > "$SEED".save
+        cp "$SEED".save "$2"
+        # echo Modified:
+        # cat "$SEED".save
+        # echo
+        # read -s -n 1 -p "Press any key to continue..."
+        # echo
+    done
+fi

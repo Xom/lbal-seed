@@ -416,15 +416,12 @@ for line in sys.stdin:
           extras += 1
     continue
 
-  start = line.find('"saved_card_types":[')
+  start = line.find('"saved_card_types":["')
   if start == -1:
     sys.stdout.write(line)
     continue
   pos = start + 20
-  end = line.index(']', pos)
-  if end == pos:
-    sys.stdout.write(line)
-    continue
+  end = line.index(']', pos + 2)
 
   ss = line[pos:end].split(',', 2)
   c = len(ss)
