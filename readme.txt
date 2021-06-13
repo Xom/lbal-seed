@@ -64,7 +64,7 @@ More details in this FAQ when I get around to it.
 
 VI. How to use lbal-seed on Windows?
 
-There are two possibilities. One is to use Windows Subsystem for Linux (WSL), which should work, though no one yet has tried and reported back to me. The other, of course, is to emulate Linux in a virtual machine.
+There are three possibilities. One is to use Windows Subsystem for Linux (WSL), which should work, though no one yet has tried and reported back to me. The others are to emulate Linux in a virtual machine, or to install Linux on a USB drive to use when you want to play LBAL with lbal-seed.
 
 For WSL, the big question is whether it can run the Linux version of LBAL. Otherwise, if you use the Windows executable, then play.sh won't be able to stop the game automatically, and you'll have to manually close the game at each roll. (I imagine that Alt+F4 or clicking the X is faster than the in-game menu.)
 
