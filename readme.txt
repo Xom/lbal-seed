@@ -8,9 +8,9 @@ V. How does lbal-seed work?
 VI. Explain the seeding algorithm
 VII. What's that spreadsheet that Xom uses?
 
-I'm Xom#7240 in Discord. I welcome your questions, bug reports, feedback, and seeded run results!
+I'm Xom#7240 in Discord; see lbal-seed in action at https://twitch.tv/xomnom
 
-Demonstration video coming soon. In the meantime, look for recordings of me using lbal-seed at https://twitch.tv/xomnom
+I welcome your questions, bug reports, feedback, and seeded run stories!
 
 ===========================================================
 
