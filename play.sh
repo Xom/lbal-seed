@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# lbal-seed v20210613a
+
 ask() {
     local prompt default reply
 
@@ -123,7 +125,8 @@ else
         prev=$(tail -n 1 "$SEED".save)
         "$1" > /dev/null 2>&1 &
         while sleep 0.1; do
-            next=$(tail -n 1 "$2")
+            nextfull=$(<"$2")
+            next=$(tail -n 1 <<< "$nextfull")
             if [ "$prev" != "$next" ] && [[ "$next" == *"\"saved_card_types\":[\""* ]]; then
                 if [ $new -eq 0 ]; then
                     break
@@ -142,7 +145,7 @@ else
         # echo Original:
         # cat "$2"
         # echo
-        ./seed.py "$SEED" < "$2" > "$SEED".save
+        ./seed.py "$SEED" > "$SEED".save <<< "$nextfull"
         cp "$SEED".save "$2"
         # echo Modified:
         # cat "$SEED".save

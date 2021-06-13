@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+
+# lbal-seed v20210613a
+
 import os
 import sys
 from random import Random

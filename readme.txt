@@ -1,11 +1,11 @@
-lbal-seed: Seeded runs for Luck Be A Landlord
+lbal-seed v20210613a: Seeded runs for Luck Be A Landlord
 
 I. What is a seeded run?
 II. What are lbal-seed's requirements?
-III. How to use lbal-seed?
-IV. How does lbal-seed work?
-V. Explain the seeding algorithm.
-VI. How to use lbal-seed on Windows?
+III. Where to download lbal-seed?
+IV. How to use lbal-seed?
+V. How does lbal-seed work?
+VI. Explain the seeding algorithm
 
 I'm Xom#7240 in Discord. I welcome your questions, bug reports, feedback, and seeded run results!
 
@@ -23,11 +23,27 @@ Use the same seed as a friend and see how you fare given the same rolls!
 
 II. What are lbal-seed's requirements?
 
-bash and python3 are required. OS X and most Linux distributions come with both. I'll discuss Windows later in this FAQ.
+bash and python3 are required. OS X and most Linux distributions come with both.
+
+On Windows, there are three possibilities. One is to use Windows Subsystem for Linux (WSL), which should work, though no one yet has tried and reported back to me. (You could be the one! How about it?)
+
+For WSL, the big question is whether it can run the Linux version of LBAL. Otherwise, if you use the Windows executable, then play.sh won't be able to stop the game automatically, and you'll have to manually close the game at each roll. (I imagine that Alt+F4 or clicking the X is faster than the in-game menu.)
+
+The other possibilities are to emulate Linux in a virtual machine, or to install Linux on a USB drive to use when you want to play LBAL with lbal-seed.
 
 ===========================================================
 
-III. How to use lbal-seed?
+III. Where to download lbal-seed?
+
+lbal-seed lives at https://github.com/xom/lbal-seed
+
+You can download the latest by clicking the green download button labeled "Code", then "Download ZIP".
+
+(Which is a link to https://github.com/Xom/lbal-seed/archive/refs/heads/master.zip )
+
+===========================================================
+
+IV. How to use lbal-seed?
 
 Before you start, make a backup of your LBAL.save in case something goes wrong.
 
@@ -48,24 +64,14 @@ The script will run LBAL, and at each roll, it will stop LBAL, then run seed.py 
 
 ===========================================================
 
-IV. How does lbal-seed work?
+V. How does lbal-seed work?
 
 seed.py is a python3 script that takes as input a LBAL.save and a seed string, and outputs a save that's identical except for the current roll (2-3 cards depending whether you have Shattered Mirror). It keeps track of its progress in files named SEEDSTRING.dat and SEEDSTRING.save, where SEEDSTRING is the seed string. (So any non-empty string can be a seed as long as it can be used in a filename. For convenience, auto-generated seeds have zz- as a prefix.) play.sh is a bash script that alternates endlessly between running LBAL and seed.py.
 
 ===========================================================
 
-V. Explain the seeding algorithm.
+VI. Explain the seeding algorithm.
 
 It's the same-symbols algorithm in this post: https://discord.com/channels/213781388992708608/797256317109534720/851928830556766258
 The behavior is statistically identical to the original game, assuming that the following odds table that I used is correct: https://discord.com/channels/213781388992708608/797256317109534720/852543163310932008
 More details in this FAQ when I get around to it.
-
-===========================================================
-
-VI. How to use lbal-seed on Windows?
-
-There are three possibilities. One is to use Windows Subsystem for Linux (WSL), which should work, though no one yet has tried and reported back to me. The others are to emulate Linux in a virtual machine, or to install Linux on a USB drive to use when you want to play LBAL with lbal-seed.
-
-For WSL, the big question is whether it can run the Linux version of LBAL. Otherwise, if you use the Windows executable, then play.sh won't be able to stop the game automatically, and you'll have to manually close the game at each roll. (I imagine that Alt+F4 or clicking the X is faster than the in-game menu.)
-
-Again, I'm Xom#7240 in Discord. I welcome your questions, bug reports, feedback, seeded run results, and ESPECIALLY reports of using WSL!
