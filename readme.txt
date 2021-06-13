@@ -6,6 +6,7 @@ III. Where to download lbal-seed?
 IV. How to use lbal-seed?
 V. How does lbal-seed work?
 VI. Explain the seeding algorithm
+VII. What's that spreadsheet that Xom uses?
 
 I'm Xom#7240 in Discord. I welcome your questions, bug reports, feedback, and seeded run results!
 
@@ -75,3 +76,9 @@ VI. Explain the seeding algorithm.
 It's the same-symbols algorithm in this post: https://discord.com/channels/213781388992708608/797256317109534720/851928830556766258
 The behavior is statistically identical to the original game, assuming that the following odds table that I used is correct: https://discord.com/channels/213781388992708608/797256317109534720/852543163310932008
 More details in this FAQ when I get around to it.
+
+===========================================================
+
+VII. What's that spreadsheet that Xom uses?
+
+It calculates and projects gold-per-turn. It's not related to lbal-seed. It's a LibreOffice Calc spreadsheet with macros, which may or may not work in Excel (Someone try it and tell me?), but it may be useful even without them. It contains a readme, and you can download it at https://xomboard.neocities.org/lbal.ods
