@@ -1,4 +1,4 @@
-lbal-seed v20210613b: Seeded runs for Luck Be A Landlord
+lbal-seed v20210613c: Seeded runs for Luck Be A Landlord
 
 I. What is a seeded run?
 II. What are lbal-seed's requirements?
@@ -74,9 +74,11 @@ seed.py is a python3 script that takes as input a LBAL.save and a seed string, a
 
 VI. KNOWN ISSUES
 
-There is one known issue, for which I've implemented a tentative fix. If you see it again, please report it to me. The symptom is that activating Adoption Papers gives you an animal roll but then doesn't destroy Adoption Papers. I don't know whether it's also possible with other rolling items.
+Swear Jar doesn't work, because if you have Swear Jar and you exit the game during symbol pick, then when you run the game again and continue, the game doesn't remember if the last roll should increment your Swear Jar. If you want to use Swear Jar, you have to make notes for what the counter should be, then manually edit your save when you want to destroy it. I've reported this bug to the developer. Please keep an eye out for more item counter bugs like this.
 
-To elaborate, when Adoption Papers is used, the game saves twice in immediate succession. play.sh detects the new roll in the first save, but the Adoption Papers doesn't get destroyed until the second save, so the second save is the one we want. I could try to detect this situation, but I don't have a general way to do it for generic rolling items like Symbol Bomb and Booster Pack, so instead I choose to wait 0.3 seconds after EVERY roll, in order to always find the second save if it happens. If you see the problem again, I'll have to increase the wait.
+There was another known issue, for which I've implemented a tentative fix. If you see it again, please report it to me. The symptom is that activating Adoption Papers gives you an animal roll but then doesn't destroy Adoption Papers. I don't know whether it's also possible with other rolling items.
+
+To elaborate, when Adoption Papers is used, the game saves twice in immediate succession. play.sh detects the new roll in the first save, but the Adoption Papers doesn't get destroyed until the second save, so the second save is the one we want. I could try to detect this situation, but I don't have a general way to do it for generic rolling items like Symbol Bomb and Booster Pack, so instead, whenever you have a rolling item, the script pauses 0.2 seconds after each roll, in order to always find the second save if it happens. If you see the problem again, I'll have to increase the pause.
 
 ===========================================================
 

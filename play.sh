@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# lbal-seed v20210613b
+# lbal-seed v20210613c
 
 ask() {
     local prompt default reply
@@ -125,8 +125,9 @@ else
         prev=$(tail -n 1 "$SEED".save)
         "$1" > /dev/null 2>&1 &
         while sleep 0.1; do
-            next=$(tail -n 1 "$2")
-            if [ "$prev" != "$next" ] && [[ "$next" == *"\"saved_card_types\":[\""* ]]; then
+            { nextfull=$(<"$2"); } 2> /dev/null
+            next=$(tail -n 1 <<< "$nextfull")
+            if [ "$prev" != "$next" ] && [[ "$next" == *"\"saved_card_types\":[\""* ]] && [[ $(head -n 1 <<< "$nextfull") == *"\"adding\":false,"*"\"path\":\"/root/Main/Sums/Coin Sum\""* ]]; then
                 if [ $new -eq 0 ]; then
                     break
                 fi
@@ -139,7 +140,9 @@ else
                 exit
             fi
         done
-        sleep 0.3
+        if grep -q '"item_types":[^]]*"\(adoption_papers\|lunchbox\|booster_pack\|symbol_bomb\)' <<< "$nextfull"; then
+            sleep 0.2
+        fi
         kill "$!" 2> /dev/null
         wait
         # echo Original:
