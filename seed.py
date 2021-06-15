@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# lbal-seed v20210613c
+# lbal-seed v20210615a
 
 import os
 import sys

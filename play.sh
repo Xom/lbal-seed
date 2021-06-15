@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# lbal-seed v20210613c
+# lbal-seed v20210615a
 
 ask() {
     local prompt default reply
@@ -140,9 +140,9 @@ else
                 exit
             fi
         done
-        if grep -q '"item_types":[^]]*"\(adoption_papers\|lunchbox\|booster_pack\|symbol_bomb\)' <<< "$nextfull"; then
-            sleep 0.2
-        fi
+        # if grep -q '"item_types":[^]]*"\(adoption_papers\|lunchbox\|booster_pack\|symbol_bomb\)' <<< "$nextfull"; then
+        sleep 0.2
+        # fi
         kill "$!" 2> /dev/null
         wait
         # echo Original:

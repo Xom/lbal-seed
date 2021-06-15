@@ -1,4 +1,4 @@
-lbal-seed v20210613c: Seeded runs for Luck Be A Landlord
+lbal-seed v20210615a: Seeded runs for Luck Be A Landlord
 
 I. What is a seeded run?
 II. What are lbal-seed's requirements?
@@ -74,11 +74,9 @@ seed.py is a python3 script that takes as input a LBAL.save and a seed string, a
 
 VI. KNOWN ISSUES
 
-Swear Jar doesn't work, because if you have Swear Jar and you exit the game during symbol pick, then when you run the game again and continue, the game doesn't remember if the last roll should increment your Swear Jar. If you want to use Swear Jar, you have to make notes for what the counter should be, then manually edit your save when you want to destroy it. I've reported this bug to the developer. Please keep an eye out for more item counter bugs like this.
+I've added a 0.2-second pause between stopping the game and running seed.py, because sometimes the game saves twice in immediate succession, resulting in a read error if I don't pause. If you see this problem again, please tell me so that I can increase the pause.
 
-There was another known issue, for which I've implemented a tentative fix. If you see it again, please report it to me. The symptom is that activating Adoption Papers gives you an animal roll but then doesn't destroy Adoption Papers. I don't know whether it's also possible with other rolling items.
-
-To elaborate, when Adoption Papers is used, the game saves twice in immediate succession. play.sh detects the new roll in the first save, but the Adoption Papers doesn't get destroyed until the second save, so the second save is the one we want. I could try to detect this situation, but I don't have a general way to do it for generic rolling items like Symbol Bomb and Booster Pack, so instead, whenever you have a rolling item, the script pauses 0.2 seconds after each roll, in order to always find the second save if it happens. If you see the problem again, I'll have to increase the pause.
+One known case is when Adoption Papers is used. I don't know about other rolling items. There's another known case for which I have the save file, but I don't know the distinguishing condition. In theory, it should never be necessary to save twice like this, but I don't feel like bothering the developer about this now; maybe later when the end of early access is nigh.
 
 ===========================================================
 
