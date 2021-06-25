@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# lbal-seed v20210615a
+# lbal-seed v20210625a
 
 import os
 import sys
@@ -180,11 +180,13 @@ IDS = [[[[
 ]]], [[[
   'pool_ball',
   'adoption_papers',
+  'birdhouse',
   'black_pepper',
   'blue_pepper',
   'checkered_flag',
   'cyan_pepper',
   'egg_carton',
+  'fifth_ace',
   'fish_bowl',
   'frying_pan',
   'grave_robber',
@@ -208,6 +210,7 @@ IDS = [[[[
   'pizza_the_cat',
   'purple_pepper',
   'quigley_the_wolf',
+  'rain_cloud',
   'red_pepper',
   'reroll',
   'ricky_the_banana',
@@ -224,7 +227,6 @@ IDS = [[[[
   'horseshoe',
   'anthropology_degree',
   'barrel_o_dwarves',
-  'birdhouse',
   'black_cat',
   'blue_suits',
   'capsule_machine',
@@ -237,7 +239,6 @@ IDS = [[[[
   'cursed_katana',
   'dwarven_anvil',
   'fertilizer',
-  'fifth_ace',
   'flush',
   'fruit_basket',
   'goldilocks',
@@ -246,7 +247,6 @@ IDS = [[[[
   'lint_roller',
   'looting_glove',
   'piggy_bank',
-  'rain_cloud',
   'red_suits',
   'ritual_candle',
   'rusty_gear',

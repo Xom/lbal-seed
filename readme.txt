@@ -1,4 +1,4 @@
-lbal-seed v20210615a: Seeded runs for Luck Be A Landlord
+lbal-seed v20210625a: Seeded runs for Luck Be A Landlord
 
 I. What is a seeded run?
 II. What are lbal-seed's requirements?
@@ -74,9 +74,13 @@ seed.py is a python3 script that takes as input a LBAL.save and a seed string, a
 
 VI. KNOWN ISSUES
 
+I've updated the rarities for v0.8, which breaks seed compatibility. I might not get around to testing for a while, but hopefully it just works, since it's barely changed.
+
 I've added a 0.2-second pause between stopping the game and running seed.py, because sometimes the game saves twice in immediate succession, resulting in a read error if I don't pause. If you see this problem again, please tell me so that I can increase the pause.
 
 One known case is when Adoption Papers is used. I don't know about other rolling items. There's another known case for which I have the save file, but I don't know the distinguishing condition. In theory, it should never be necessary to save twice like this, but I don't feel like bothering the developer about this now; maybe later when the end of early access is nigh.
+
+Another purely visual bug in the game, which I've reported, is that with Cursed Katana / Rain Cloud, for approximately one turn after continuing from a save, Ninja / Rain are labeled Uncommon (when they should be common). Due to how this mod works, this bug will be constantly active.
 
 ===========================================================
 
