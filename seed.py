@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# lbal-seed v20210625a
+# lbal-seed v20210629a
 
 import os
 import sys
@@ -523,13 +523,14 @@ for line in sys.stdin:
           break
   elif t == 1:
     for r in rr:
-      while True:
-        i = random_int(r + 13)
-        s = IDS[1][r][0][i]
-        if i == 0 or s not in DICT:
-          ss.append(s)
-          DICT[s] = True
+      result = IDS[1][r][0][0]
+      for i in range(THRESHOLD):
+        s = IDS[1][r][0][random_int(r + 13)]
+        if s not in DICT:
+          result = s
           break
+      ss.append(result)
+      DICT[result] = True
   else:
     for r in rr:
       while True:

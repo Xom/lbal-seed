@@ -1,4 +1,4 @@
-lbal-seed v20210625a: Seeded runs for Luck Be A Landlord
+lbal-seed v20210629a: Seeded runs for Luck Be A Landlord
 
 I. What is a seeded run?
 II. What are lbal-seed's requirements?
@@ -74,13 +74,17 @@ seed.py is a python3 script that takes as input a LBAL.save and a seed string, a
 
 VI. KNOWN ISSUES
 
-I've updated the rarities for v0.8, which breaks seed compatibility. I might not get around to testing for a while, but hopefully it just works, since it's barely changed.
-
 I've added a 0.2-second pause between stopping the game and running seed.py, because sometimes the game saves twice in immediate succession, resulting in a read error if I don't pause. If you see this problem again, please tell me so that I can increase the pause.
 
 One known case is when Adoption Papers is used. I don't know about other rolling items. There's another known case for which I have the save file, but I don't know the distinguishing condition. In theory, it should never be necessary to save twice like this, but I don't feel like bothering the developer about this now; maybe later when the end of early access is nigh.
 
-Another purely visual bug in the game, which I've reported, is that with Cursed Katana / Rain Cloud, for approximately one turn after continuing from a save, Ninja / Rain are labeled Uncommon (when they should be common). Due to how this mod works, this bug will be constantly active.
+--
+
+lbal-seed v20210629a fixes what was a small discrepancy from the game. Previously, lbal-seed could roll another Pool Ball, Horseshoe, etc. even when you already had the item. Now, it won't roll another such unless all other items of the same rarity are exhausted, which is how I now believe the game works.
+
+The effect of this change on any given seed is minor. The direct effect is that it will occasionally roll the next random item in the sequence instead of the previous, incorrect (at least as I currently believe) choice of a Pool Ball. The indirect effect is that when this happens, it alters which items in the rest of the sequence appear together in the same rolls.
+
+From the perspective of using the previous, incorrect algorithm, the effects are inverted; in summary, the direct effect was that it sometimes rolled a Pool Ball instead of a random item, and the indirect effect was that it sometimes rolled another random item instead of a random item. In my 8-win streak in LBAL v0.7, this direct effect did not affect the outcome (i.e. win) of any of the 8 runs, and the indirect effect I consider irrelevant when playing a new seed; therefore, in my opinion, the flaw in the algorithm did not invalidate that winstreak. (In my opinion, for proper winstreak eligibility, a seeded run is only eligible if you're the first person to play that seed.)
 
 ===========================================================
 
@@ -94,4 +98,4 @@ More details in this FAQ when I get around to it.
 
 VIII. What's that spreadsheet that Xom uses?
 
-It calculates and projects gold-per-turn. It's not related to lbal-seed. It's a LibreOffice Calc spreadsheet with macros, which may or may not work in Excel (Someone try it and tell me?), but it may be useful even without them. It contains a readme, and you can download it at https://xomboard.neocities.org/lbal.ods
+It calculates and projects gold-per-turn. It's not related to lbal-seed. It's a LibreOffice Calc spreadsheet with macros. If you'd like to recreate it in Excel, you can message me on Discord for help. The spreadsheet contains its own readme, and you can download it at https://xomboard.neocities.org/lbal.ods

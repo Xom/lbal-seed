@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# lbal-seed v20210625a
+# lbal-seed v20210629a
 
 ask() {
     local prompt default reply
