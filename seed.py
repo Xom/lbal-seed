@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# lbal-seed v20210629a
+# lbal-seed v20210716a
 
 import os
 import sys
@@ -83,6 +83,7 @@ IDS = [[[[
   'coconut',
   'd5',
   'diamonds',
+  'essence_capsule',
   'golem',
   'hearts',
   'hex_of_destruction',
@@ -183,6 +184,7 @@ IDS = [[[[
   'birdhouse',
   'black_pepper',
   'blue_pepper',
+  'brown_pepper',
   'checkered_flag',
   'cyan_pepper',
   'egg_carton',
@@ -266,6 +268,7 @@ IDS = [[[[
   'clear_sky',
   'coffee',
   'devils_deal',
+  'dishwasher',
   'holy_water',
   'lucky_carrot',
   'lucky_dice',
@@ -284,6 +287,7 @@ IDS = [[[[
   'copycat',
   'frozen_pizza',
   'golden_carrot',
+  'popsicle',
   'telescope',
 ]]]]
 
@@ -322,9 +326,9 @@ RNG_TYPE = [
   len(IDS[1][1][0]), # 14: uncommon item
   len(IDS[1][2][0]), # 15: rare item
   len(IDS[1][3][0]), # 16: very_rare item
-  None, # 17: lunchbox rarity
-  None, # 18: adoption_papers rarity
-  None, # 19: choice between ninja and rain when both cursed_katana and rain_cloud (no perf cost when not both, due to being at end of list)
+  len(IDS[1][0][0]) + len(IDS[1][1][0]) + len(IDS[1][2][0]) + len(IDS[1][3][0]), # 17: essence
+  None, # 18: lunchbox rarity
+  None, # 19: adoption_papers rarity
 ]
 THRESHOLD = 625 # deserializing getstate() output involves parsing 625 integers, so it can be faster to count and replay state advances after seeding
 
@@ -409,13 +413,21 @@ for line in sys.stdin:
     end = line.index(']', start)
     if end != start:
       for item in [s[1:-1] for s in line[start:end].split(',')]:
-        DICT[item] = True
+        if len(item) <= 8 or item[-8:] != '_essence':
+          DICT[item] = True
+        elif item == 'lucky_seven_essence':
+          DICT['chemical_seven'] = True
+          extras += 1
     start = line.index('"item_types":[', end) + 14
     end = line.index(']', start)
     if end != start:
       for item in [s[1:-1] for s in line[start:end].split(',')]:
         DICT[item] = True
-        if item == 'cursed_katana' or item == 'rain_cloud':
+        if item == 'cursed_katana':
+          DICT['ninja'] = True
+          extras += 1
+        elif item == 'rain_cloud':
+          DICT['rain'] = True
           extras += 1
     continue
 
@@ -442,62 +454,100 @@ for line in sys.stdin:
     r_start += 17
     r_end = line.index(']', r_start)
     if r_end != r_start:
+      initial = True
       for rarity in [s[1:-1] for s in line[r_start:r_end].split(',', 2)]:
+        if initial:
+          if rarity == 'essence':
+            t = 2
+            break
+          initial = False
         rr.append(DICT[rarity])
-      if line.find('"or_better":true', 0, start) != -1:
+      if t != 2 and line.find('"or_better":true', 0, start) != -1:
         rr_min = rr
         rr = []
-  if t == 0:
-    r_start = line.find('"symbols":{"rare":', 0, start)
-    if r_start != -1:
-      r_start += 18
-      unluck /= float(line[r_start:line.index(',', r_start)])
-    r_start = line.find('"forced_group":"', 0, start)
-    if r_start != -1:
-      t = 2 if line[r_start+16:r_start+21] == 'food"' else 3
-      rng = t + 15
-  if t == 0 and extras != 0:
-    numer = extras
-    denom = extras + RNG_TYPE[2]
-    while len(rr) < c:
-      x = random_float(rng) * unluck
-      if x < odds[0]:
-        rr.append(3)
-      elif x < odds[1]:
-        rr.append(2)
-      elif x < odds[2]:
-        rr.append(1)
-      elif numer != 0 and (x - odds[2]) * denom < (unluck - odds[2]) * numer:
-        if numer == 2:
-          # rr.append(int(x * 65536) % 2 - 2) # alternative to maintaining RNG[-1] is to use a low-order "bit", but RNG[-1] has no significant perf cost
-          rr.append(-2 if random_float(19) < 0.5 else -1)
-        elif 'rain_cloud' not in DICT or -1 in rr:
-          rr.append(-2)
+  if t != 2:
+    if t == 0:
+      r_start = line.find('"symbols":{"rare":', 0, start)
+      if r_start != -1:
+        r_start += 18
+        unluck /= float(line[r_start:line.index(',', r_start)])
+      r_start = line.find('"forced_group":"', 0, start)
+      if r_start != -1:
+        t = 3 if line[r_start+16:r_start+21] == 'food"' else 4
+        rng = t + 15
+    if t == 0 and extras != 0:
+      numer = extras
+      denom = extras + RNG_TYPE[2]
+      while len(rr) < c:
+        x = random_float(rng) * unluck
+        if x < odds[0]:
+          rr.append(3)
+        elif x < odds[1]:
+          rr.append(2)
+        elif x < odds[2]:
+          rr.append(1)
+        elif numer != 0 and (x - odds[2]) * denom < (unluck - odds[2]) * numer:
+          if numer == 3:
+            rr.append(int(x * 59049) % 3 - 3) # use a low-order "digit"
+          elif numer == 2:
+            if 'chemical_seven' not in DICT or -3 in rr:
+              rr.append(int(x * 16384) % 2 - 2)
+            elif 'rain' not in DICT or -1 in rr:
+              rr.append(int(x * 32768) % 2 - 3)
+            elif int(x * 65536) % 2 == 0:
+              rr.append(-1)
+            else:
+              rr.append(-3)
+          elif 'chemical_seven' not in DICT or -3 in rr:
+            if 'rain' not in DICT or -1 in rr:
+              rr.append(-2)
+            else:
+              rr.append(-1)
+          else:
+            rr.append(-3)
+          numer -= 1
+          denom -= 1
         else:
-          rr.append(-1)
-        numer -= 1
-      else:
-        rr.append(0)
-      denom -= 1
-  else:
-    while len(rr) < c:
-      x = random_float(rng) * unluck
-      if x < odds[0]:
-        rr.append(3)
-      elif x < odds[1]:
-        rr.append(2)
-      elif x < odds[2]:
-        rr.append(1)
-      else:
-        rr.append(0)
-  if rr_min:
-    for i in range(len(rr_min)):
-      if rr_min[i] > rr[i] and rr_min[i] > 0:
-        rr[i] = rr_min[i]
+          rr.append(0)
+          denom -= 1
+    elif t == 3 and 'chemical_seven' in DICT:
+      numer = 1
+      denom = extras + RNG_TYPE[6]
+      while len(rr) < c:
+        x = random_float(rng) * unluck
+        if x < odds[0]:
+          rr.append(3)
+        elif x < odds[1]:
+          rr.append(2)
+        elif x < odds[2]:
+          rr.append(1)
+        elif numer != 0 and (x - odds[2]) * denom < (unluck - odds[2]) * numer:
+          rr.append(-3)
+          numer = 0
+        else:
+          rr.append(0)
+    else:
+      while len(rr) < c:
+        x = random_float(rng) * unluck
+        if x < odds[0]:
+          rr.append(3)
+        elif x < odds[1]:
+          rr.append(2)
+        elif x < odds[2]:
+          rr.append(1)
+        else:
+          rr.append(0)
+    if rr_min:
+      for i in range(len(rr_min)):
+        if rr_min[i] > rr[i] and rr_min[i] > 0:
+          rr[i] = rr_min[i]
 
   ss = []
   if t == 0:
     for r in rr:
+      if r == -3:
+        ss.append('chemical_seven')
+        continue
       if r == -2:
         ss.append('ninja')
         continue
@@ -531,18 +581,30 @@ for line in sys.stdin:
           break
       ss.append(result)
       DICT[result] = True
+  elif t == 2:
+    items = IDS[1][0][0] + IDS[1][1][0] + IDS[1][2][0] + IDS[1][3][0]
+    i = 0
+    while i < 3:
+      s = items[random_int(17)] + '_essence'
+      if s not in DICT:
+        ss.append(s)
+        DICT[s] = True
+        i += 1
   else:
     for r in rr:
+      if r == -3:
+        ss.append('chemical_seven')
+        continue
       while True:
         if r == 3:
-          very_rare = IDS[0][3][t - 1][0]
+          very_rare = IDS[0][3][t - 2][0]
           if very_rare not in DICT:
             ss.append(very_rare)
             DICT[very_rare] = True
             break
-          s = IDS[0][2][t - 1][random_int(t * 3 + 2)]
+          s = IDS[0][2][t - 2][random_int(t * 3 - 1)]
         else:
-          s = IDS[0][r][t - 1][random_int(t * 3 + r)]
+          s = IDS[0][r][t - 2][random_int(t * 3 - 3 + r)]
         if s not in DICT:
           ss.append(s)
           DICT[s] = True

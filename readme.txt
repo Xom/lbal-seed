@@ -1,4 +1,4 @@
-lbal-seed v20210629a: Seeded runs for Luck Be A Landlord
+lbal-seed v20210716a: Seeded runs for Luck Be A Landlord
 
 I. What is a seeded run?
 II. What are lbal-seed's requirements?
@@ -17,7 +17,7 @@ I welcome your questions, bug reports, feedback, and seeded run stories!
 
 I. What is a seeded run?
 
-A seed is a value used to initialize a RNG. By re-using a seed, the same sequence of random outcomes can be re-created. lbal-seed applies a seeded RNG to symbol and item rolls; the same seed will always generate the same rolls until luck modifiers are acquired (details later in this FAQ). lbal-seed doesn't affect spins or abilities; even with the same seed, their outcomes remain independently random across runs.
+A seed is a value used to initialize a RNG. By re-using a seed, the same sequence of random outcomes can be re-created. lbal-seed applies a seeded RNG to symbol, item, and essence rolls; the same seed will always generate the same rolls until luck modifiers are acquired (details later in this FAQ). lbal-seed doesn't affect spins or abilities; even with the same seed, their outcomes remain independently random across runs.
 
 Use the same seed as a friend and see how you fare given the same rolls!
 
@@ -80,11 +80,7 @@ One known case is when Adoption Papers is used. I don't know about other rolling
 
 --
 
-lbal-seed v20210629a fixes what was a small discrepancy from the game. Previously, lbal-seed could roll another Pool Ball, Horseshoe, etc. even when you already had the item. Now, it won't roll another such unless all other items of the same rarity are exhausted, which is how I now believe the game works.
-
-The effect of this change on any given seed is minor. The direct effect is that it will occasionally roll the next random item in the sequence instead of the previous, incorrect (at least as I currently believe) choice of a Pool Ball. The indirect effect is that when this happens, it alters which items in the rest of the sequence appear together in the same rolls.
-
-From the perspective of using the previous, incorrect algorithm, the effects are inverted; in summary, the direct effect was that it sometimes rolled a Pool Ball instead of a random item, and the indirect effect was that it sometimes rolled another random item instead of a random item. In my 8-win streak in LBAL v0.7, this direct effect did not affect the outcome (i.e. win) of any of the 8 runs, and the indirect effect I consider irrelevant when playing a new seed; therefore, in my opinion, the flaw in the algorithm did not invalidate that winstreak. (In my opinion, for proper winstreak eligibility, a seeded run is only eligible if you're the first person to play that seed.)
+lbal-seed v20210716a fixes the previously incorrect handling of Cursed Katana and Rain Cloud. Previously, if you had Cursed Katana / Rain Cloud, the algorithm didn't skip Ninja / Rain in the uncommon sequence, which meant you could still get Ninja / Rain when you were supposed to get an uncommon, resulting in finding 1.35x as many Ninja / Rain as you were supposed to. (I thought I had implemented the skipping but apparently I didn't. I discovered and fixed it when extending the code for Lucky Seven Essence.)
 
 ===========================================================
 
