@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# lbal-seed v20210716a
+# lbal-seed v20210814a
 
 import os
 import sys
@@ -40,6 +40,7 @@ IDS = [[[[
   'dwarf',
   'flower',
   'key',
+  'light_bulb',
   'lockbox',
   'miner',
   'ore',
@@ -111,13 +112,13 @@ IDS = [[[[
   'target',
   'tedium_capsule',
   'thief',
+  'time_capsule',
   'void_stone',
 ], [
   'chemical_seven',
   'coconut_half',
   'orange',
   'peach',
-  'plum',
   'void_fruit',
   'wine',
 ], [
@@ -135,6 +136,7 @@ IDS = [[[[
   'beehive',
   'card_shark',
   'chef',
+  'comedian',
   'dame',
   'diver',
   'emerald',
@@ -227,11 +229,9 @@ IDS = [[[[
   'yellow_pepper',
 ]], [[
   'horseshoe',
-  'anthropology_degree',
   'barrel_o_dwarves',
   'black_cat',
   'blue_suits',
-  'capsule_machine',
   'cardboard_box',
   'cleaning_rag',
   'coin_on_a_string',
@@ -239,6 +239,7 @@ IDS = [[[[
   'compost_heap',
   'conveyor_belt',
   'cursed_katana',
+  'dark_humor',
   'dwarven_anvil',
   'fertilizer',
   'flush',
@@ -261,8 +262,10 @@ IDS = [[[[
   'zaroffs_contract',
 ]], [[
   'bowling_ball',
+  'anthropology_degree',
   'bag_of_holding',
   'booster_pack',
+  'capsule_machine',
   'chicken_coop',
   'chili_powder',
   'clear_sky',
@@ -275,7 +278,6 @@ IDS = [[[[
   'oil_can',
   'protractor',
   'quiver',
-  'recycling',
   'sunglasses',
   'swapping_device',
   'symbol_bomb_very_big',
@@ -288,6 +290,7 @@ IDS = [[[[
   'frozen_pizza',
   'golden_carrot',
   'popsicle',
+  'recycling',
   'telescope',
 ]]]]
 
@@ -411,17 +414,16 @@ for line in sys.stdin:
     extras = 0
     start += 24
     end = line.index(']', start)
-    if end != start:
-      for item in [s[1:-1] for s in line[start:end].split(',')]:
-        if len(item) <= 8 or item[-8:] != '_essence':
-          DICT[item] = True
-        elif item == 'lucky_seven_essence':
-          DICT['chemical_seven'] = True
-          extras += 1
+    if '"lucky_seven_essence"' in line[start:end]:
+      DICT['chemical_seven'] = True
+      extras += 1
     start = line.index('"item_types":[', end) + 14
     end = line.index(']', start)
     if end != start:
       for item in [s[1:-1] for s in line[start:end].split(',')]:
+        if item[-2:] == '_d':
+          DICT[item[:-2]] = True
+          continue
         DICT[item] = True
         if item == 'cursed_katana':
           DICT['ninja'] = True
@@ -429,6 +431,15 @@ for line in sys.stdin:
         elif item == 'rain_cloud':
           DICT['rain'] = True
           extras += 1
+        elif item == 'dark_humor':
+          DICT['comedian'] = True
+    start = line.index('"recently_destroyed_items":[', end) + 28
+    end = line.index(']', start)
+    if end != start:
+      for item_data in [s for s in line[start:end].split('},{')]:
+        item_start = item_data.index('"type":"') + 8
+        item_end = item_data.index('"', item_start)
+        DICT[item_data[item_start:item_end]] = True
     continue
 
   start = line.find('"saved_card_types":["')
@@ -475,9 +486,12 @@ for line in sys.stdin:
       if r_start != -1:
         t = 3 if line[r_start+16:r_start+21] == 'food"' else 4
         rng = t + 15
-    if t == 0 and extras != 0:
+    if t == 0:
       numer = extras
       denom = extras + RNG_TYPE[2]
+      udenom = RNG_TYPE[3]
+      if 'comedian' in DICT:
+        udenom += 1
       while len(rr) < c:
         x = random_float(rng) * unluck
         if x < odds[0]:
@@ -485,7 +499,11 @@ for line in sys.stdin:
         elif x < odds[1]:
           rr.append(2)
         elif x < odds[2]:
-          rr.append(1)
+          if 'comedian' in DICT and -4 not in rr and (x - odds[1]) * denom < odds[2] - odds[1]:
+            rr.append(-4)
+          else:
+            rr.append(1)
+            udenom -= 1
         elif numer != 0 and (x - odds[2]) * denom < (unluck - odds[2]) * numer:
           if numer == 3:
             rr.append(int(x * 59049) % 3 - 3) # use a low-order "digit"
@@ -545,6 +563,9 @@ for line in sys.stdin:
   ss = []
   if t == 0:
     for r in rr:
+      if r == -4:
+        ss.append('comedian')
+        continue
       if r == -3:
         ss.append('chemical_seven')
         continue

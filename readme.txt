@@ -1,4 +1,4 @@
-lbal-seed v20210716a: Seeded runs for Luck Be A Landlord
+lbal-seed v20210814a: Seeded runs for Luck Be A Landlord
 
 I. What is a seeded run?
 II. What are lbal-seed's requirements?
@@ -80,7 +80,11 @@ One known case is when Adoption Papers is used. I don't know about other rolling
 
 --
 
-lbal-seed v20210716a fixes the previously incorrect handling of Cursed Katana and Rain Cloud. Previously, if you had Cursed Katana / Rain Cloud, the algorithm didn't skip Ninja / Rain in the uncommon sequence, which meant you could still get Ninja / Rain when you were supposed to get an uncommon, resulting in finding 1.35x as many Ninja / Rain as you were supposed to. (I thought I had implemented the skipping but apparently I didn't. I discovered and fixed it when extending the code for Lucky Seven Essence.)
+The script wrongly detects a new roll when you disable or enable an item during a roll. For now, you must avoid disabling or enabling items until after picking from the roll.
+
+--
+
+My handling of Dark Humor is incomplete, and generates too few Comedians when you have Dark Humor and either are guaranteed an uncommon or have enough luck to be de facto guaranteed an uncommon (or better).
 
 ===========================================================
 
