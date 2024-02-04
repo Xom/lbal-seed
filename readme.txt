@@ -1,3 +1,9 @@
+June 2022 update: I came up with a better, more general seeding algorithm, described in my gist titled "Beyond Duplicate Bridge: Generalizing Shuffle Duplication to Autochess, Deckbuilders, and other games" at https://gist.github.com/Xom/d836151a320d116936ea00203f70d46b
+
+(It is not implemented.)
+
+===========================================================
+
 lbal-seed v20210814a: Seeded runs for Luck Be A Landlord
 
 I. What is a seeded run?
